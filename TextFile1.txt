@@ -1,0 +1,2 @@
+﻿Recording cmd 
+pwsh bin/Debug/net8.0/playwright.ps1 codegen demo.playwright.dev/todomvc
