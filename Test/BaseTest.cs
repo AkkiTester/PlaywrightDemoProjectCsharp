@@ -7,10 +7,12 @@ using AventStack.ExtentReports;
 using System.IO;
 using System.Threading;
 using PlaywrightDemoProject.Pages.LoginPageNS;
+using PlaywrightDemoProject.Pages.HeaderAction ;
 using PlaywrightDemoProject.Utilitis.ReadJson;
 using Microsoft.Playwright;
 using System;
 using System.Runtime.InteropServices;
+using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 
 
 namespace PlaywrightDemoProject.Test.Base
@@ -26,14 +28,18 @@ namespace PlaywrightDemoProject.Test.Base
         const int UP_ARROW = 0x26;   // Up Arrow key
 
 
-
+        string screenshotFileName ;
+        string screenshotPath ;
         string ExtendReportPath;
         static ExtentReports ExtentReports;
-        static ExtentTest testLog ;
-        public LoginPage loginPage;
+        static ExtentTest testLog;
+        protected LoginPage loginPage;
+        protected HeaderPage header;
         string thirdLevelUp;
 
         public ReadJson readData = new ReadJson();
+
+
 
 
         [DllImport("user32.dll")]
@@ -65,9 +71,10 @@ namespace PlaywrightDemoProject.Test.Base
             System.Console.WriteLine("------------Test SetUp-------------");
             page = await initPage();
             //page = await initCustomPage();
-            
-            loginPage = new LoginPage(page);
 
+
+            loginPage = new LoginPage(page);
+            header = new HeaderPage(page);
             await page.GotoAsync(readData.GetValueFromJson("LoginURL"));
 
 
@@ -94,7 +101,7 @@ namespace PlaywrightDemoProject.Test.Base
         //    await LogTestInfo(Status.Info, "---------------Navigating to Login Page");
 
         //    await LogTestInfo(Status.Fail, "----------------Page Loaded");
- 
+
 
         //    await page.GotoAsync(readData.GetValueFromJson("LoginURL"));
 
@@ -169,7 +176,7 @@ namespace PlaywrightDemoProject.Test.Base
             testLog = ExtentReports.CreateTest(testName);
         }
 
-        public static async Task LogTestInfo(Status status,string message)
+        public static async Task LogTestInfo(Status status, string message)
         {
             testLog.Log(status, message);
         }
@@ -199,7 +206,7 @@ namespace PlaywrightDemoProject.Test.Base
         //}
 
 
-        private async Task<string> CaptureScreenshot(string testName)
+        public async Task<string> CaptureScreenshot(string testName)
         {
             string screenshotDir = Path.Combine(thirdLevelUp, "Screenshots");
             if (!Directory.Exists(screenshotDir))
@@ -208,14 +215,23 @@ namespace PlaywrightDemoProject.Test.Base
             }
 
             // Define screenshot path with test case name
-            var screenshotFileName = $"{testName}_{DateTime.Now:yyyyMMdd_HHmmss}.jpg";
-            var screenshotPath = Path.Combine(screenshotDir, screenshotFileName);
+            screenshotFileName = $"{testName}_{DateTime.Now:yyyyMMdd_HHmmss}.jpg";
+            screenshotPath = Path.Combine(screenshotDir, screenshotFileName);
 
             // Capture and save screenshot
-            await page.ScreenshotAsync(new PageScreenshotOptions { Path = screenshotPath });
+            await page.ScreenshotAsync(new PageScreenshotOptions
+            {
+                Path = screenshotPath,
+                FullPage = true
+            });
+            //await page.ScreenshotAsync(new PageScreenshotOptions 
+            //{ Path = screenshotPath 
+            //});
 
             // Return relative path for the report
             return Path.Combine("..", "Screenshots", screenshotFileName);
         }
+
+        
     }
 }

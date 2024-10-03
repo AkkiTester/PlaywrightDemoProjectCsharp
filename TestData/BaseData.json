@@ -2,5 +2,6 @@
   "HomeURL": "https://magento-demo.mageplaza.com/",
   "LoginURL": "https://magento-demo.mageplaza.com/default/customer/account/login",
   "UserEmailId": "roni_cost@example.com",
-  "Pass": "roni_cost3@example.com"
+  "Pass": "roni_cost3@example.com",
+  "UserName": "Veronica Costello"
 }

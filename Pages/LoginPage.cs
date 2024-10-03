@@ -1,11 +1,13 @@
 ﻿using AventStack.ExtentReports;
 using Microsoft.Playwright;
+using PlaywrightDemoProject.Pages.HeaderAction;
 using PlaywrightDemoProject.Test.Base;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+
 
 namespace PlaywrightDemoProject.Pages.LoginPageNS
 {
@@ -19,8 +21,6 @@ namespace PlaywrightDemoProject.Pages.LoginPageNS
             "//fieldset[@class='fieldset login']//span[contains(text(),'Sign In')]";
         string loginUserName = "div[class='panel header'] span[class='logged-in']";
         string contactInfo = "//div[@class='box box-information']//div[@class='box-content']/p";
-
-
 
         public LoginPage(IPage page)
         {
@@ -53,7 +53,7 @@ namespace PlaywrightDemoProject.Pages.LoginPageNS
             await clickSignBtn();
         }
 
-        public async Task verifyLogin(string LoggedUserName)
+        public async Task<bool> verifyLogin(string LoggedUserName)
         {
             await CreateTest("Verify Login Test");
             await LogTestInfo(Status.Info, "Navigating to Login Page");
@@ -71,23 +71,26 @@ namespace PlaywrightDemoProject.Pages.LoginPageNS
 
             //System.Console.WriteLine(userName);
             System.Console.WriteLine(contactInfotext);
-            //await Task.Delay(10000);
+            await Task.Delay(5000);
             //System.Console.WriteLine(userName);
             System.Console.WriteLine(contactInfotext);
 
-            await LogTestInfo(Status.Info, $" contact Info {contactInfotext}");
+            //await LogTestInfo(Status.Info, $" contact Info {contactInfotext}");
 
             if (contactInfotext.Contains(LoggedUserName))
             {
                 await LogTestInfo(Status.Pass, "Test login Pass");
-
+                return true;
             }
             else
             {
                 await LogTestInfo(Status.Fail, "Test login Fail");
+                return false;
             }
+            
+            
             //Assert.That(userName, Does.Contain(LoggedUserName));
-            Assert.That(contactInfotext, Does.Contain(LoggedUserName));
+            //Assert.That(contactInfotext, Does.Contain(LoggedUserName));
 
 
         }

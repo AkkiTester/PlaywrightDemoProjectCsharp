@@ -15,7 +15,12 @@ namespace PlaywrightDemoProject.Test
         [Test] 
         public async Task loginTestCase()
         {
-            await loginPage.verifyLogin("Veronica Costello");
+            bool result = await loginPage.verifyLogin(
+                readData.GetValueFromJson("UserName"));
+            
+            await header.clickSignOut();
+            Assert.That(result, Is.True);
+            //Assert.That(result, Is.False);
         }
 
     }
