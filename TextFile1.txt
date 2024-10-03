@@ -1,2 +1,11 @@
-﻿Recording cmd 
+﻿**Recording cmd 
 pwsh bin/Debug/net8.0/playwright.ps1 codegen demo.playwright.dev/todomvc
+
+**run single test case
+dotnet test --filter Name~TestFirst
+
+** Wait for Load Element
+await page.Locator(loginUserName).WaitForAsync(new LocatorWaitForOptions
+            {
+                State = WaitForSelectorState.Visible
+            });
