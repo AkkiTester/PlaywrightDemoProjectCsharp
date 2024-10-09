@@ -10,6 +10,7 @@ using PlaywrightDemoProject.Pages.LoginPageNS;
 
 namespace PlaywrightDemoProject.Test
 {
+    //[TestFixture, Parallelizable(ParallelScope.All)]
     class LoginTest : BaseTest
     {
         [Test] 

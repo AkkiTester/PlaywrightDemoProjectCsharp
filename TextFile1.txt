@@ -9,3 +9,5 @@ await page.Locator(loginUserName).WaitForAsync(new LocatorWaitForOptions
             {
                 State = WaitForSelectorState.Visible
             });
+
+await Task.Delay(10000);

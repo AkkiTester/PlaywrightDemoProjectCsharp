@@ -23,15 +23,28 @@ namespace PlaywrightDemoProject.Utilitis.InitPage
 
         public static async Task<IPage> initPage(String Browser = "chrome")
         {
-            var playwright =  await Playwright.CreateAsync();
+            var playwright = await Playwright.CreateAsync();
             String b = Browser.ToLower();
 
-            if (b == "chrome")
+            // 1. Get the dynamic Chrome path
+            string chromePath = GetChromePath();
+
+            if (b == "chromium")
             {
                 browser = await playwright.Chromium.LaunchAsync(new BrowserTypeLaunchOptions { Headless = false });
 
             }
-            else if (b =="firefox")
+            else if (b == "chrome")
+            {
+                browser = await playwright.Chromium.LaunchAsync(new BrowserTypeLaunchOptions
+                {
+                    ExecutablePath = chromePath,// Use dynamic Chrome path
+                    Headless = false, // You can set this to true if you want the browser to run headles
+                    SlowMo =250
+
+                });
+                }
+            else if (b == "firefox")
             {
                 browser = await playwright.Firefox.LaunchAsync(new BrowserTypeLaunchOptions { Headless = false });
             }

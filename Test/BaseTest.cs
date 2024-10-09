@@ -7,7 +7,7 @@ using AventStack.ExtentReports;
 using System.IO;
 using System.Threading;
 using PlaywrightDemoProject.Pages.LoginPageNS;
-using PlaywrightDemoProject.Pages.HeaderAction ;
+using PlaywrightDemoProject.Pages.HeaderAction;
 using PlaywrightDemoProject.Utilitis.ReadJson;
 using Microsoft.Playwright;
 using System;
@@ -28,8 +28,8 @@ namespace PlaywrightDemoProject.Test.Base
         const int UP_ARROW = 0x26;   // Up Arrow key
 
 
-        string screenshotFileName ;
-        string screenshotPath ;
+        string screenshotFileName;
+        string screenshotPath;
         string ExtendReportPath;
         static ExtentReports ExtentReports;
         static ExtentTest testLog;
@@ -56,13 +56,18 @@ namespace PlaywrightDemoProject.Test.Base
             // Move back three levels
             thirdLevelUp = Directory.GetParent(Directory.GetParent(Directory.GetParent(CurrentPath).FullName).FullName).FullName;
 
-            ExtendReportPath = Path.Combine(thirdLevelUp, "Report", $"CRMReport_{DateTime.Now:yyyyMMdd_HHmmss}.html");
+            ExtendReportPath = Path.Combine(thirdLevelUp, "Report", $"TestReport_{DateTime.Now:yyyyMMdd_HHmmss}.html");
 
             System.Console.WriteLine(ExtendReportPath);
+            ExtentSparkReporter htmlReporter;
+            if (ExtentReports == null)
+            {
+                htmlReporter = new ExtentSparkReporter(ExtendReportPath);
+                ExtentReports = new ExtentReports();
+                ExtentReports.AttachReporter(htmlReporter);
+            }
 
-            var htmlReporter = new ExtentSparkReporter(ExtendReportPath);
-            ExtentReports = new ExtentReports();
-            ExtentReports.AttachReporter(htmlReporter);
+
         }
 
         [SetUp]
@@ -87,38 +92,7 @@ namespace PlaywrightDemoProject.Test.Base
             keybd_event((byte)WIN_KEY, 0, KEY_UP, UIntPtr.Zero);    // Release Windows key
 
 
-            //System.Console.WriteLine(readData.GetValueFromJson("HomeURL"));
-            //System.Console.WriteLine(readData.GetValueFromJson("LoginURL"));
-            //System.Console.WriteLine(readData.GetValueFromJson("UserEmailId"));
-            //System.Console.WriteLine(readData.GetValueFromJson("Pass"));
-
         }
-
-        //[Test]
-        //public async Task TestFirst()
-        //{
-        //    await CreateTest("TestFirst");
-        //    await LogTestInfo(Status.Info, "---------------Navigating to Login Page");
-
-        //    await LogTestInfo(Status.Fail, "----------------Page Loaded");
-
-
-        //    await page.GotoAsync(readData.GetValueFromJson("LoginURL"));
-
-
-        //    // Simulate pressing Windows key and Up Arrow key
-        //    keybd_event((byte)WIN_KEY, 0, KEY_DOWN, UIntPtr.Zero); // Press Windows key
-        //    keybd_event((byte)UP_ARROW, 0, KEY_DOWN, UIntPtr.Zero); // Press Up Arrow
-
-        //    // Simulate releasing Windows key and Up Arrow key
-        //    keybd_event((byte)UP_ARROW, 0, KEY_UP, UIntPtr.Zero);   // Release Up Arrow
-        //    keybd_event((byte)WIN_KEY, 0, KEY_UP, UIntPtr.Zero);    // Release Windows key
-
-
-        //    await Task.Delay(10000); // Simulate a delay for demo purposes
-        //    Assert.Fail();
-        //}
-
         [TearDown]
         public async Task TestTearDown()
         {
@@ -159,7 +133,11 @@ namespace PlaywrightDemoProject.Test.Base
         [OneTimeTearDown]
         public async Task SuiteTearDown()
         {
-            ExtentReports.Flush();
+            if (ExtentReports != null)
+            {
+                ExtentReports.Flush();
+            }
+
 
             System.Console.WriteLine("------------Suite TearDown-------------");
 
@@ -178,7 +156,12 @@ namespace PlaywrightDemoProject.Test.Base
 
         public static async Task LogTestInfo(Status status, string message)
         {
-            testLog.Log(status, message);
+            //testLog.Log(status, message);
+
+            lock (testLog)
+            {
+                testLog.Log(status, message);
+            }
         }
 
 
@@ -232,6 +215,5 @@ namespace PlaywrightDemoProject.Test.Base
             return Path.Combine("..", "Screenshots", screenshotFileName);
         }
 
-        
     }
 }
